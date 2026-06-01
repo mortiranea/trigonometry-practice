@@ -1,104 +1,42 @@
-# Trigonometry Practice
+# TrigMaster: Interactive Trigonometry Practice
 
-A collection of interactive multiplayer games and puzzles. Currently featuring **GRIDLOCK** and **CODEWORDS**.
+TrigMaster is a minimalist, web-based platform designed to help students master trigonometry through targeted, interactive practice. Built entirely on visual intuition and instant feedback, the platform strips away the fluff to focus on core mathematical comprehension.
 
-## Games
+---
 
-### GRIDLOCK
+## Key Features
 
-A strategic 15×15 grid game where two players compete to reach each other's baseline while placing barriers to block their opponent's path.
+### 1. Interactive Unit Circle
 
-**Rules:**
-- **Players:** Two players, each with one token
-- **Starting Positions:** Player 1 at (row 1, col 8), Player 2 at (row 15, col 8)
-- **Win Condition:** Player 1 wins by reaching any tile on Row 15. Player 2 wins by reaching any tile on Row 1.
-- **Actions (choose one per turn):**
-  - **Move:** Move your token one tile in any direction (orthogonal or diagonal)
-  - **Place Barrier:** Place a permanent barrier on any empty tile anywhere on the board
-- **The Golden Rule:** You cannot place a barrier if it completely blocks the last remaining path for either player to reach their goal line
+Master the foundations of sine, cosine, and tangent using a dynamic visual interface.
 
-**Features:**
-- Real-time BFS pathfinding to enforce the "can't block last path" rule
-- Visual highlighting of valid moves and goal lines
-- Cross-computer multiplayer with join codes
+* **Live Vector Tracking:** Drag the terminal side of an angle to watch trigonometric values update in real time.
+* **Quadrant Visualizer:** Color-coded grids instantly show whether values are positive or negative based on the angle's location.
+* **Special Angles Mode:** Practice exact values for standard radian and degree measures ($30^\circ$, $45^\circ$, $60^\circ$, etc.).
 
-### CODEWORDS
+### 2. Adaptive Problem Generator
 
-A competitive Wordle-style game where each player chooses a secret word and takes turns guessing.
+No repetitive worksheets. Our engine generates unique problems tailored to your current skill level across three core modules:
 
-**Rules:**
-- **Setup Phase:** Both players choose a 4-6 letter secret word
-- **Guessing Phase:** Players take turns guessing the opponent's word
-- **Feedback:**
-  - 🟩 **Green:** Correct letter in correct position
-  - 🟨 **Yellow:** Correct letter in wrong position
-  - ⬜ **Gray:** Letter not in the word
-- **Win Condition:** First player to guess the opponent's word wins. If you run out of guesses (6 max), you lose.
+| Module | Topics Covered | Input Type |
+| --- | --- | --- |
+| **Right Triangle Trig** | SOH-CAH-TOA, solving for sides, angles of elevation/depression | Numeric / Multiple Choice |
+| **Identities & Proofs** | Pythagorean identities, double-angle formulas, verification | Step-by-step logic selector |
+| **Graphing Functions** | Amplitude, period shifts, phase shifts for $\sin(x)$, $\cos(x)$, and $\tan(x)$ | Interactive canvas dragging |
 
-**Features:**
-- Classic Wordle-style feedback system
-- Cross-computer multiplayer with join codes
-- Single player mode against the computer
+### 3. Immediate Feedback & Error Isolation
 
-## How to Play
+When you get an answer wrong, TrigMaster doesn't just show you the correct result. The system breaks down your response to pinpoint exactly where you miscalculated:
 
-### Starting a Game
-1. Enter your player name (or use the default)
-2. Select a game from the lobby
-3. Choose **Single Player** or **Multiplayer**
+> **Example:** "Your calculation for the hypotenuse length is correct ($\sqrt{25}$), but you applied the secant ratio instead of the cosecant ratio."
 
-### Multiplayer Modes
+---
 
-**Create Room:**
-- Get a unique 6-character join code
-- Share it with a friend
-- Game starts automatically when opponent joins
+## Technical Stack & Performance
 
-**Join Room:**
-- Enter a join code from a friend
-- Game starts automatically when you join
+The website is optimized for accessibility, speed, and cross-device compatibility:
 
-## Installation
-
-This is a static website with no backend dependencies. Simply open `index.html` in a web browser or deploy to any static hosting service.
-
-### To Deploy on GitHub Pages:
-
-1. Go to your repository settings
-2. Under "Pages", set the source to the main branch
-3. Your site will be available at `https://yourusername.github.io/trigonometry-practice`
-
-## File Structure
-
-```
-.
-├── index.html           # Main HTML entry point
-├── app.js              # Game lobby, multiplayer, and state management
-├── styles.css          # All styling
-└── games/
-    ├── gridlock/
-    │   └── gridlock.js # Gridlock game implementation
-    └── codewords/
-        └── codewords.js # CODEWORDS game implementation
-```
-
-## Adding New Games
-
-To add a new game:
-1. Add the game metadata to the `games` object in `app.js`
-2. Create the game file in `games/{gameName}/{gameName}.js`
-3. Implement an `init{GameName}()` function that initializes the game
-4. Add CSS classes to `styles.css` as needed
-5. Both single-player and multiplayer will work automatically with the existing framework
-
-## Technical Details
-
-### Multiplayer Architecture
-- Uses localStorage for cross-tab communication
-- Room codes are 6-character alphanumeric strings
-- Data is stored locally; works across different computers on the same network or with code sharing
-- Easy to upgrade to WebSockets or a backend server in the future
-
-## License
-
-This project is open source and available under the MIT License.
+* **Frontend UI:** HTML5, CSS3 (Tailwind CSS), and Vanilla JavaScript.
+* **Math Rendering:** `MathJax` / `KaTeX` for crisp, textbook-quality formulas.
+* **Visual Canvas:** SVG and HTML5 Canvas for smooth, lag-free circle and graph interactions without heavy external libraries.
+* **No Database Required:** Student progress is saved locally using browser `localStorage`, making the platform fully serverless and lightning-fast to load.
