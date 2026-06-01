@@ -28,11 +28,43 @@ body {
     text-align: center;
 }
 
+.lobby-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
 .lobby-title {
     font-size: 3em;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     font-weight: bold;
+}
+
+.player-name-section {
+    background: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.95em;
+}
+
+.small-button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 0.9em;
+    transition: background 0.3s;
+}
+
+.small-button:hover {
+    background: #764ba2;
 }
 
 .lobby-subtitle {
@@ -74,6 +106,119 @@ body {
 .game-card-description {
     font-size: 0.9em;
     opacity: 0.9;
+}
+
+/* Game Mode Selection */
+.game-mode-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.mode-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 30px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    border: none;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.mode-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.mode-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.mode-description {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* Multiplayer Section */
+.multiplayer-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.multiplayer-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 30px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    border: none;
+    text-align: center;
+}
+
+.multiplayer-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.button-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.button-text {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.button-subtext {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* Waiting Section */
+.waiting-section {
+    padding: 40px;
+    text-align: center;
+}
+
+.waiting-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.room-code-display {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #667eea;
+    letter-spacing: 5px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+.waiting-text {
+    color: #666;
+    margin-top: 20px;
 }
 
 /* Game Container Styles */
@@ -205,12 +350,155 @@ body {
     border: 2px dashed #FF9800;
 }
 
+/* Codewords Styles */
+.codewords-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.codewords-setup {
+    background: #f5f5f5;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.setup-title {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.word-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px;
+    font-size: 1em;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.word-input::placeholder {
+    text-transform: uppercase;
+}
+
+.guessing-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.player-section {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.player-section-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.word-display {
+    font-size: 2em;
+    letter-spacing: 5px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.guess-input-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.guess-input {
+    flex: 1;
+    padding: 12px;
+    font-size: 1em;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.guess-button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.guess-button:hover:not(:disabled) {
+    background: #764ba2;
+}
+
+.guess-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.guesses-list {
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.guess-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.letter {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+    font-size: 0.9em;
+}
+
+.letter.green {
+    background: #4CAF50;
+}
+
+.letter.yellow {
+    background: #FFC107;
+    color: #333;
+}
+
+.letter.gray {
+    background: #999;
+}
+
 .game-status {
     background: #f5f5f5;
     padding: 20px;
     border-radius: 10px;
     font-size: 1.1em;
     color: #333;
+    text-align: center;
 }
 
 .game-status.winner {
@@ -295,6 +583,11 @@ body {
         font-size: 2em;
     }
 
+    .lobby-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
     .lobby-subtitle {
         font-size: 1em;
     }
@@ -311,9 +604,14 @@ body {
 
     .game-header {
         flex-direction: column;
+        text-align: center;
     }
 
     .lobby-container {
         padding: 40px 20px;
+    }
+
+    .guessing-section {
+        grid-template-columns: 1fr;
     }
 }

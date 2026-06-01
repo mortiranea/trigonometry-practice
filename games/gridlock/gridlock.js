@@ -7,18 +7,18 @@ const BARRIER = 3;
 
 let gridlockState = {
     board: [],
-    player1Pos: { row: 0, col: 7 }, // row 1, col 8 (0-indexed: 0, 7)
-    player2Pos: { row: 14, col: 7 }, // row 15, col 8 (0-indexed: 14, 7)
+    player1Pos: { row: 0, col: 7 },
+    player2Pos: { row: 14, col: 7 },
     currentPlayer: PLAYER1,
     gameOver: false,
     winner: null,
-    selectedAction: null, // 'move' or 'barrier'
+    selectedAction: null,
     validMoves: [],
-    lastPathTiles: new Set() // Track tiles that are part of the last path
+    isMultiplayer: false
 };
 
-// Initialize the game
 function initGridlock() {
+    gridlockState.isMultiplayer = gameState.opponentName && gameState.opponentName !== 'Computer';
     resetGridlock();
     renderGridlock();
 }
@@ -32,10 +32,8 @@ function resetGridlock() {
     gridlockState.winner = null;
     gridlockState.selectedAction = null;
     gridlockState.validMoves = [];
-    gridlockState.lastPathTiles = new Set();
 }
 
-// BFS to find if a path exists from start to goal
 function canReachGoal(startPos, goalRow, board) {
     const visited = new Set();
     const queue = [startPos];
@@ -44,12 +42,10 @@ function canReachGoal(startPos, goalRow, board) {
     while (queue.length > 0) {
         const pos = queue.shift();
 
-        // Check if reached goal
         if (pos.row === goalRow) {
             return true;
         }
 
-        // Explore neighbors (8 directions)
         for (let dr = -1; dr <= 1; dr++) {
             for (let dc = -1; dc <= 1; dc++) {
                 if (dr === 0 && dc === 0) continue;
@@ -58,11 +54,9 @@ function canReachGoal(startPos, goalRow, board) {
                 const newCol = pos.col + dc;
                 const key = `${newRow},${newCol}`;
 
-                // Check bounds and visited
                 if (newRow < 0 || newRow >= BOARD_SIZE || newCol < 0 || newCol >= BOARD_SIZE) continue;
                 if (visited.has(key)) continue;
 
-                // Check for obstacles
                 const cell = board[newRow][newCol];
                 if (cell === BARRIER) continue;
                 if ((newRow === gridlockState.player1Pos.row && newCol === gridlockState.player1Pos.col) ||
@@ -79,62 +73,6 @@ function canReachGoal(startPos, goalRow, board) {
     return false;
 }
 
-// BFS to find all tiles that are part of a path to the goal (for visualization)
-function findPathTiles(startPos, goalRow, board) {
-    const visited = new Set();
-    const pathTiles = new Set();
-    const queue = [startPos];
-    const parent = new Map();
-    visited.add(`${startPos.row},${startPos.col}`);
-    parent.set(`${startPos.row},${startPos.col}`, null);
-
-    let reachedGoal = null;
-
-    while (queue.length > 0) {
-        const pos = queue.shift();
-
-        if (pos.row === goalRow) {
-            reachedGoal = pos;
-            break;
-        }
-
-        for (let dr = -1; dr <= 1; dr++) {
-            for (let dc = -1; dc <= 1; dc++) {
-                if (dr === 0 && dc === 0) continue;
-
-                const newRow = pos.row + dr;
-                const newCol = pos.col + dc;
-                const key = `${newRow},${newCol}`;
-
-                if (newRow < 0 || newRow >= BOARD_SIZE || newCol < 0 || newCol >= BOARD_SIZE) continue;
-                if (visited.has(key)) continue;
-
-                const cell = board[newRow][newCol];
-                if (cell === BARRIER) continue;
-                if ((newRow === gridlockState.player1Pos.row && newCol === gridlockState.player1Pos.col) ||
-                    (newRow === gridlockState.player2Pos.row && newCol === gridlockState.player2Pos.col)) {
-                    continue;
-                }
-
-                visited.add(key);
-                parent.set(key, pos);
-                queue.push({ row: newRow, col: newCol });
-            }
-        }
-    }
-
-    if (reachedGoal) {
-        let current = reachedGoal;
-        while (current) {
-            pathTiles.add(`${current.row},${current.col}`);
-            current = parent.get(`${current.row},${current.col}`);
-        }
-    }
-
-    return pathTiles;
-}
-
-// Check if placing a barrier would block the last path
 function wouldBlockLastPath(row, col) {
     const testBoard = gridlockState.board.map(r => [...r]);
     testBoard[row][col] = BARRIER;
@@ -145,7 +83,6 @@ function wouldBlockLastPath(row, col) {
     return !player1CanReach || !player2CanReach;
 }
 
-// Get valid moves for current player
 function getValidMoves() {
     const pos = gridlockState.currentPlayer === PLAYER1 ? gridlockState.player1Pos : gridlockState.player2Pos;
     const moves = [];
@@ -173,24 +110,6 @@ function getValidMoves() {
     return moves;
 }
 
-// Get valid barrier placements for current player
-function getValidBarriers() {
-    const validBarriers = [];
-
-    for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col < BOARD_SIZE; col++) {
-            if (gridlockState.board[row][col] === EMPTY) {
-                if (!wouldBlockLastPath(row, col)) {
-                    validBarriers.push({ row, col });
-                }
-            }
-        }
-    }
-
-    return validBarriers;
-}
-
-// Select action (move or barrier)
 function selectAction(action) {
     gridlockState.selectedAction = action;
 
@@ -201,21 +120,18 @@ function selectAction(action) {
     renderGridlock();
 }
 
-// Move the current player
 function makeMove(row, col) {
     if (gridlockState.selectedAction !== 'move') return;
 
     const validMove = gridlockState.validMoves.some(m => m.row === row && m.col === col);
     if (!validMove) return;
 
-    // Update player position
     if (gridlockState.currentPlayer === PLAYER1) {
         gridlockState.player1Pos = { row, col };
     } else {
         gridlockState.player2Pos = { row, col };
     }
 
-    // Check win condition
     if (gridlockState.currentPlayer === PLAYER1 && row === BOARD_SIZE - 1) {
         gridlockState.gameOver = true;
         gridlockState.winner = 1;
@@ -224,7 +140,6 @@ function makeMove(row, col) {
         gridlockState.winner = 2;
     }
 
-    // Reset and switch player
     gridlockState.selectedAction = null;
     gridlockState.validMoves = [];
     if (!gridlockState.gameOver) {
@@ -234,7 +149,6 @@ function makeMove(row, col) {
     renderGridlock();
 }
 
-// Place a barrier
 function placeBarrier(row, col) {
     if (gridlockState.selectedAction !== 'barrier') return;
     if (gridlockState.board[row][col] !== EMPTY) return;
@@ -242,7 +156,6 @@ function placeBarrier(row, col) {
 
     gridlockState.board[row][col] = BARRIER;
 
-    // Reset and switch player
     gridlockState.selectedAction = null;
     gridlockState.validMoves = [];
     gridlockState.currentPlayer = gridlockState.currentPlayer === PLAYER1 ? PLAYER2 : PLAYER1;
@@ -250,7 +163,6 @@ function placeBarrier(row, col) {
     renderGridlock();
 }
 
-// Handle tile click
 function onTileClick(row, col) {
     if (gridlockState.gameOver) return;
 
@@ -261,7 +173,6 @@ function onTileClick(row, col) {
     }
 }
 
-// Render the game
 function renderGridlock() {
     const app = document.getElementById('app');
 
@@ -271,11 +182,9 @@ function renderGridlock() {
             let classes = 'tile';
             let content = '';
 
-            // Goal lines
             if (row === 0) classes += ' goal-line-2';
             if (row === BOARD_SIZE - 1) classes += ' goal-line-1';
 
-            // Cell content
             if (gridlockState.board[row][col] === BARRIER) {
                 classes += ' barrier';
                 content = '■';
@@ -300,11 +209,13 @@ function renderGridlock() {
 
     let statusHTML = '';
     if (gridlockState.gameOver) {
-        statusHTML = `<div class="game-status winner">🎉 Player ${gridlockState.winner} wins! 🎉</div>`;
+        const winnerName = gridlockState.winner === 1 ? gameState.playerName : gameState.opponentName;
+        statusHTML = `<div class="game-status winner">🎉 ${winnerName} (Player ${gridlockState.winner}) wins! 🎉</div>`;
     } else {
+        const currentPlayerName = gridlockState.currentPlayer === PLAYER1 ? gameState.playerName : gameState.opponentName;
         statusHTML = `<div class="game-status">
             <span class="player-indicator ${gridlockState.currentPlayer === PLAYER1 ? 'p1' : 'p2'}"></span>
-            Player ${gridlockState.currentPlayer}'s turn - Choose an action
+            ${currentPlayerName}'s turn - Choose an action
         </div>`;
     }
 
@@ -323,11 +234,11 @@ function renderGridlock() {
                 </div>
                 ${statusHTML}
                 <div class="player-status">
-                    <div class="player-info ${gridlockState.currentPlayer === PLAYER1 ? 'active' : ''}">
-                        <span class="player-indicator p1"></span>Player 1 (Blue) - Goal: Row 15
+                    <div class="player-info">
+                        <span class="player-indicator p1"></span>${gameState.playerName} (Player 1) - Goal: Row 15
                     </div>
-                    <div class="player-info ${gridlockState.currentPlayer === PLAYER2 ? 'active' : ''}">
-                        <span class="player-indicator p2"></span>Player 2 (Purple) - Goal: Row 1
+                    <div class="player-info">
+                        <span class="player-indicator p2"></span>${gameState.opponentName} (Player 2) - Goal: Row 1
                     </div>
                 </div>
                 <div class="controls">
